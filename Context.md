@@ -1,95 +1,164 @@
-Act as a system architect.
+Act as a senior backend engineer.
 
-You are given an AI-assisted coding framework with the following components:
-
-* Prompt
-* Agent
-* Instructions
-* Skills
-* Scripts
-* MCP
-* Templates
-* Workflows
-
-Your task is to **refactor the system by clearly defining responsibilities** for each component.
+Your task is to create a **GitLab MCP (Model Context Provider)** module for an AI-assisted coding system.
 
 ---
 
-## Goals
+## Objective
 
-1. Ensure **separation of concerns**
-2. Avoid overlap between components
-3. Keep the system **modular, scalable, and deterministic**
-4. Ensure each component has a **single responsibility**
+Build a **lightweight MCP layer** that provides structured access to GitLab for agents.
 
----
+The MCP should be:
 
-## For each component, define:
-
-* Purpose (what it should do)
-* Responsibilities (what it must handle)
-* Non-responsibilities (what it must NOT do)
-* Example usage in this system
+* stateless
+* minimal
+* deterministic
+* reusable
 
 ---
 
-## Important Constraints
+## Tech Stack
 
-* Prompt → should only trigger or initiate actions
-* Agent → should only execute a specific role
-* Instructions → define global or type-specific rules
-* Skills → provide capabilities/tools (no decision making)
-* Scripts → reusable execution logic (deterministic)
-* MCP → provide structured context/data access
-* Templates → define structured input/output formats
-* Workflows → define execution order (orchestration only)
+* Node.js (JavaScript or TypeScript)
+* Axios (for HTTP calls)
 
 ---
 
-## System Context
+## GitLab Details
 
-The system follows this workflow:
+Use GitLab REST API v4.
 
-refine → plan → implement → test → review → close
+Environment variables:
 
-* GitLab is the source of truth
-* Handoffs are stored in comments
-* TYPE is inferred during refine
-* Workon Agent orchestrates execution
-* All components must remain stateless
+* GITLAB_URL
+* GITLAB_TOKEN
+* GITLAB_PROJECT_ID
 
 ---
 
-## Output Format
+## Required Features (STRICT SCOPE)
 
-Return a clean structured definition like:
+Implement only these functions:
 
-Component: <name>
+1. getIssue(issueId)
+2. getComments(issueId)
+3. addComment(issueId, content)
+4. updateStatus(issueId, status)
 
-Purpose:
-...
+---
 
-Responsibilities:
+## Behavior Rules
 
-* ...
+* Do NOT include business logic
+* Do NOT include workflow logic
+* Do NOT decide anything based on status
+* Only fetch, transform, and return data
 
-Non-Responsibilities:
+---
 
-* ...
+## Output Format (IMPORTANT)
+
+Standardize all outputs.
+
+### getIssue()
+
+Return:
+
+{
+"id": number,
+"title": string,
+"description": string,
+"state": "open" | "closed",
+"labels": string[]
+}
+
+---
+
+### getComments()
+
+Return:
+
+[
+{
+"body": string,
+"created_at": string
+}
+]
+
+---
+
+### addComment()
+
+* Add comment to issue
+* Return success response
+
+---
+
+### updateStatus()
+
+* Use labels in format: status:<value>
+* Replace existing status label
 
 Example:
-...
+status:plan
 
 ---
 
-## Additional Task
+## File Structure
 
-After defining components, suggest:
+Create:
 
-1. Any overlaps or conflicts in current design
-2. Improvements to make system cleaner
-3. Missing components (if any)
+/mcp/gitlab/
+client.js
+config.js
+index.js
 
 ---
 
-Focus on clarity, minimalism, and strong architectural boundaries.
+## Implementation Requirements
+
+* Use Axios
+* Centralize API config
+* Handle errors properly
+* Keep functions small and clean
+
+---
+
+## Additional Helper (IMPORTANT)
+
+Also create:
+
+getLatestHandoff(comments)
+
+* Extract last comment containing "## HANDOFF"
+* Return parsed structure
+
+---
+
+## Coding Standards
+
+* clean, readable code
+* no over-engineering
+* no unnecessary abstractions
+
+---
+
+## Output
+
+Provide:
+
+1. Complete code for all files
+2. Example usage
+3. Environment setup instructions
+
+---
+
+## Constraints
+
+* Keep MCP as a thin wrapper
+* Do not mix with agent logic
+* Do not include authentication logic beyond token header
+
+---
+
+Focus on simplicity, clarity, and production readiness.
