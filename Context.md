@@ -1,164 +1,139 @@
-Act as a senior backend engineer.
+Act as a system architect for an AI-assisted coding framework.
 
-Your task is to create a **GitLab MCP (Model Context Provider)** module for an AI-assisted coding system.
+Your task is to refactor the existing MCP (Model Context Provider) into a **pure agentic MCP design** that works entirely within `.github` using prompts, agents, and skills.
 
 ---
 
 ## Objective
 
-Build a **lightweight MCP layer** that provides structured access to GitLab for agents.
+Design MCP as a **logical capability layer**, not as code or external service.
 
-The MCP should be:
+The MCP must:
 
-* stateless
-* minimal
-* deterministic
-* reusable
-
----
-
-## Tech Stack
-
-* Node.js (JavaScript or TypeScript)
-* Axios (for HTTP calls)
+* NOT use Node.js or any backend
+* NOT rely on external scripts
+* Be fully usable within prompt-driven agent execution
+* Be invoked conceptually as a "skill" by agents
 
 ---
 
-## GitLab Details
+## Context
 
-Use GitLab REST API v4.
+The system uses:
 
-Environment variables:
+* prompts
+* agents
+* workflows
+* instructions
+* templates
+* skills
+* MCP (to be refactored)
 
-* GITLAB_URL
-* GITLAB_TOKEN
-* GITLAB_PROJECT_ID
+Workflow:
 
----
+refine → plan → implement → test → review → close
 
-## Required Features (STRICT SCOPE)
-
-Implement only these functions:
-
-1. getIssue(issueId)
-2. getComments(issueId)
-3. addComment(issueId, content)
-4. updateStatus(issueId, status)
+GitLab is the source of truth.
 
 ---
 
-## Behavior Rules
+## Requirements
 
-* Do NOT include business logic
-* Do NOT include workflow logic
-* Do NOT decide anything based on status
-* Only fetch, transform, and return data
+### 1. Define MCP as Prompt-Based Interface
 
----
+Convert MCP functions into **agent-callable instructions**, e.g.:
 
-## Output Format (IMPORTANT)
+* get_issue
+* get_comments
+* add_comment
+* update_status
+* get_style_guide
+* get_architecture
 
-Standardize all outputs.
+Each should be defined as:
 
-### getIssue()
-
-Return:
-
-{
-"id": number,
-"title": string,
-"description": string,
-"state": "open" | "closed",
-"labels": string[]
-}
+* intent
+* input
+* expected output format
+* rules
 
 ---
 
-### getComments()
+### 2. Define MCP Usage Pattern
 
-Return:
-
-[
-{
-"body": string,
-"created_at": string
-}
-]
-
----
-
-### addComment()
-
-* Add comment to issue
-* Return success response
-
----
-
-### updateStatus()
-
-* Use labels in format: status:<value>
-* Replace existing status label
+Explain how agents will "call MCP" using prompts.
 
 Example:
-status:plan
+
+"Use MCP to fetch issue details"
+
+The system should interpret this as:
+
+* retrieving structured context
+* not executing code
 
 ---
 
-## File Structure
+### 3. Separate MCP from Skills
 
-Create:
+Clarify:
 
-/mcp/gitlab/
-client.js
-config.js
-index.js
+* MCP → provides context/data
+* Skills → perform actions (generate code, create components, etc.)
 
 ---
 
-## Implementation Requirements
+### 4. Define Standard MCP Response Format
 
-* Use Axios
-* Centralize API config
-* Handle errors properly
-* Keep functions small and clean
+All MCP outputs must follow consistent structure:
 
----
-
-## Additional Helper (IMPORTANT)
-
-Also create:
-
-getLatestHandoff(comments)
-
-* Extract last comment containing "## HANDOFF"
-* Return parsed structure
+{
+"type": "...",
+"data": {...},
+"source": "gitlab | confluence | style-guide"
+}
 
 ---
 
-## Coding Standards
+### 5. Integration with Agents
 
-* clean, readable code
-* no over-engineering
-* no unnecessary abstractions
+Explain how:
+
+* Workon Agent uses MCP to fetch context
+* Refiner uses MCP to read issue
+* Planner uses MCP to fetch architecture
+* Reviewer uses MCP to validate against style guide
 
 ---
 
-## Output
+### 6. Constraints
+
+* No implementation code
+* No API calls
+* No external dependencies
+* Only conceptual + prompt-level design
+
+---
+
+## Output Format
 
 Provide:
 
-1. Complete code for all files
-2. Example usage
-3. Environment setup instructions
+1. MCP definition (conceptual)
+2. MCP function list with structure
+3. Example usage in agents
+4. Clear distinction: MCP vs Skill vs Instruction
+5. Best practices
 
 ---
 
-## Constraints
+## Goal
 
-* Keep MCP as a thin wrapper
-* Do not mix with agent logic
-* Do not include authentication logic beyond token header
+Make MCP:
 
----
+* simple
+* consistent
+* agent-friendly
+* fully integrated into prompt-based workflow
 
-Focus on simplicity, clarity, and production readiness.
+Focus on clarity and clean architecture.
