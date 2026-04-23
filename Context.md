@@ -1,260 +1,60 @@
-Act as a senior architect for an AI-assisted coding system.
+# Hook: MD Version Check
 
-Your task is to design and generate a **complete /status-check feature** inside a `.github`-based agentic system.
-
-This system uses:
-
-* prompts
-* agents
-* workflows
-* instructions
-* skills
-* MCP (Model Context Provider)
-* templates
-* hooks
-
-There is NO backend, NO Node.js, and NO external scripts. Everything must work via prompt-driven agent execution.
+Intent:
+Ensure all modified `.md` files have updated version history.
 
 ---
 
-## 🎯 Objective
+## Trigger
 
-Create a `/status-check` capability that:
-
-* Fetches GitLab issues
-* Filters:
-
-  * assigned to current user
-  * only from active sprint
-* Groups them by workflow status
-* Outputs a clean, readable report
+* When `.md` files are changed
 
 ---
 
-## 📦 Required Components
+## Input
 
-You MUST create ALL of the following:
-
-1. prompt
-2. agent
-3. workflow
-4. MCP definition
-5. skill (formatter)
-6. instructions
-7. template
-8. hook (trigger)
-
-Each component must be clearly separated and minimal.
+* list of changed files
 
 ---
 
-## 🧠 System Context
+## Steps
 
-Workflow:
+1. Filter files:
 
-refine → plan → implement → test → review → close
+   * only `.md` files
 
-GitLab:
+2. For each file:
 
-* Issues are the source of truth
-* Status is stored as labels: status:<value>
-* Sprint is identified via label (e.g., sprint:active)
+   a. Check if file contains:
+   "## VERSION HISTORY"
 
-Environment values (DO NOT hardcode, assume from env):
+   b. Check if latest version entry is present at bottom
 
-* GITLAB_PROJECT_ID
-* GITLAB_USER
-* SPRINT_LABEL
+   c. Validate:
 
----
+   * version exists
+   * date exists
+   * change description exists
 
-## 🔹 MCP REQUIREMENT (CRITICAL)
+3. Decision:
 
-Define MCP as a **prompt-level interface**, not code.
+   IF version is missing OR not updated:
+   → flag issue
 
-Create:
-
-MCP: gitlab-status
-
----
-
-### MCP Responsibilities
-
-* fetch issues from GitLab
-* filter:
-
-  * assigned to current user
-  * active sprint only
-* extract:
-
-  * id
-  * title
-  * status (from labels)
-  * assignee
+   ELSE:
+   → pass
 
 ---
 
-### MCP Output Format
+## Output
 
-{
-"issues": [
-{
-"id": number,
-"title": string,
-"status": "refine | plan | implement | test | review | close | blocked",
-"assignee": string
-}
-]
-}
+* list of files missing version update
+* suggestion to update version
 
 ---
 
-## 🔹 SKILL REQUIREMENT
+## Rules
 
-Create skill:
-
-status-formatter
-
----
-
-### Skill Responsibilities
-
-* group issues by status
-* count issues
-* highlight blocked issues
-* format into structured output
-
----
-
-## 🔹 TEMPLATE REQUIREMENT
-
-Create template:
-
-status-report
-
----
-
-### Must Include Sections
-
-* Summary (total count)
-* refine
-* plan
-* implement
-* test
-* review
-* blocked (highlighted)
-
----
-
-## 🔹 AGENT REQUIREMENT
-
-Create:
-
-status-agent
-
----
-
-### Responsibilities
-
-* call MCP
-* pass data to skill
-* generate final report using template
-
----
-
-### Must NOT
-
-* modify GitLab
-* change status
-* infer missing data
-
----
-
-## 🔹 WORKFLOW
-
-Define a simple workflow:
-
-1. fetch data via MCP
-2. process using skill
-3. render using template
-
----
-
-## 🔹 PROMPT
-
-Create a prompt:
-
-/status-check
-
----
-
-### Prompt Behavior
-
-* trigger status-agent
-* produce report
-* no extra explanation
-
----
-
-## 🔹 INSTRUCTIONS
-
-Define rules:
-
-* be concise
-* no hallucination
-* highlight blockers
-* prefer clarity over verbosity
-
----
-
-## 🔹 HOOK (OPTIONAL)
-
-Define hook:
-
-* manual trigger OR scheduled
-* can post output to GitLab or console
-
----
-
-## ⚠️ CONSTRAINTS
-
-* Do NOT write any backend code
-* Do NOT use APIs directly
-* Everything must be conceptual and prompt-driven
-* Keep components modular
-* Avoid duplication
-
----
-
-## 📤 OUTPUT FORMAT
-
-Return:
-
-1. File structure
-2. Each component as separate section
-3. Clean, minimal, production-ready content
-
----
-
-## 🧠 QUALITY BAR
-
-The design must be:
-
-* simple
-* scalable
-* agent-friendly
-* easy to extend later (daily standup, metrics, etc.)
-
----
-
-## BONUS (OPTIONAL)
-
-Suggest 2–3 improvements like:
-
-* trend tracking
-* yesterday vs today
-* auto-post summaries
-
----
-
-Focus on clarity, modularity, and real usability.
+* do NOT modify file automatically (optional: can suggest fix)
+* enforce consistency
+* ignore non-markdown files
